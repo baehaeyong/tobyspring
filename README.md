@@ -125,3 +125,124 @@ LABEL2:
 4. 넷째, 중간코드는 코드 분석, 디버깅, 코드 변환 등에 사용됩니다. 컴파일러가 소스 코드를 중간코드로 번역하면, 이 중간코드를 분석하거나 변환하여 원하는 코드를 생성할 수 있습니다. 또한, 중간코드는 디버깅 과정에서 사용되기도 합니다.
 
 따라서, 컴파일러의 중간코드는 컴파일러의 최적화, 하드웨어 및 운영체제 호환성, 상호운용성, 코드 분석과 변환, 디버깅 등 다양한 분야에서 사용됩니다.
+
+---
+
+# Reflection
+자바에서 리플렉션(Reflection)이란, 실행 중인 자바 프로그램에서 클래스의 정보를 가져오고, 이를 통해 객체를 생성하거나 메서드를 호출하는 등의 동적인 작업을 수행하는 API입니다. 즉, 프로그램이 실행 중일 때도 클래스의 정보를 얻을 수 있으며, 이를 이용해 객체를 생성하고 메서드를 호출할 수 있습니다.
+
+리플렉션은 다음과 같은 기능을 제공합니다.
+1. 클래스의 정보 가져오기: 리플렉션은 실행 중인 클래스의 정보(패키지, 클래스명, 상위 클래스, 인터페이스, 생성자, 메서드, 필드 등)를 가져올 수 있습니다.
+2. 객체 생성하기: 리플렉션은 클래스의 정보를 바탕으로 객체를 동적으로 생성할 수 있습니다. 즉, 클래스명을 문자열로 입력받아 객체를 생성할 수 있습니다.
+3. 메서드 호출하기: 리플렉션은 실행 중인 클래스의 메서드를 호출할 수 있습니다. 메서드명과 매개변수를 지정하여 메서드를 호출할 수 있습니다.
+4. 필드 값 접근하기 리플렉션은 실행 중인 클래스의 필드 값을 읽거나 쓸 수 있습니다. 필드명을 지정하여 필드의 값을 읽거나 쓸 수 있습니다.
+
+리플렉션은 객체지향 프로그래밍의 캡슐화(encapsulation) 원칙을 위반하는 경우가 있으므로, 사용에 주의가 필요합니다. 또한, 리플렉션은 성능상의 이슈가 있으므로, 사용 시 성능에 영향을 미칠 수 있습니다. 따라서, 리플렉션을 사용할 때는 적절한 사용처를 고민하고, 성능을 고려하여 사용해야 합니다.
+
+리플렉션을 사용한 코드의 예시입니다.
+
+1. 클래스의 정보 가져오기
+```
+Class<?> clazz = Class.forName("com.example.MyClass");
+String className = clazz.getName(); // 클래스명
+Package pkg = clazz.getPackage(); // 패키지 정보
+Class<?> superClass = clazz.getSuperclass(); // 상위 클래스 정보
+Class<?>[] interfaces = clazz.getInterfaces(); // 인터페이스 정보
+Constructor<?>[] constructors = clazz.getConstructors(); // 생성자 정보
+Method[] methods = clazz.getDeclaredMethods(); // 메서드 정보
+Field[] fields = clazz.getDeclaredFields(); // 필드 정보
+```
+※ Class.forName(String className) 메서드는 주어진 클래스 이름(className)에 해당하는 클래스를 JVM에서 찾아 로드합니다. 클래스 로드는 JVM 내부의 클래스 로더(class loader)가 수행하며, 클래스 로더는 클래스 파일을 읽어들여 JVM의 메모리에 올립니다.
+
+따라서, Class.forName() 메서드는 로드되지 않은 클래스 파일을 로드할 때 사용됩니다. 예를 들어, 클래스 파일이 로드되지 않은 상태에서 해당 클래스를 사용해야 하는 경우, Class.forName() 메서드를 사용하여 클래스 파일을 로드할 수 있습니다.
+
+그러나, Class.forName() 메서드는 클래스 로딩을 수행할 때 클래스패스(classpath)에서 클래스를 찾습니다. 클래스패스는 JVM에서 클래스를 찾을 때 사용하는 경로를 말하며, 이 경로에 해당하는 디렉토리나 JAR 파일에서 클래스를 찾습니다.
+
+따라서, Class.forName() 메서드를 사용하여 클래스를 로드할 때는 해당 클래스가 클래스패스에 존재해야 합니다. 클래스패스에 존재하지 않는 클래스를 로드하려면, 별도의 클래스 로더를 구현하여 사용해야 합니다.
+
+로드되어 있는 클래스는 Class.forName(String className) 대신에 Class<T>.class를 사용하여 가져올 수 있습니다. 이 방법은 컴파일 시점에 클래스가 이미 로드되어 있을 때 사용할 수 있습니다.
+
+예를 들어, java.lang.String 클래스를 로드하는 경우, 다음과 같이 String.class를 사용하여 가져올 수 있습니다.
+```
+Class<?> clazz = String.class;
+```
+이 방법은 Class.forName() 메서드를 사용하는 것보다 더욱 간편하고 안전합니다. Class.forName() 메서드를 사용하는 경우, 클래스 이름을 문자열로 전달해야 하므로 오타 등의 문제가 발생할 가능성이 있습니다. 반면에 Class<T>.class를 사용하는 경우, 컴파일러가 클래스 이름을 검사하여 오타 등의 문제를 사전에 방지할 수 있습니다.
+
+특정 클래스가 로드되어 있는지 아닌지를 확인하기 위해서는 Class.forName(String className) 대신 ClassLoader의 loadClass(String className) 메서드를 사용할 수 있습니다. 이 메서드는 해당 클래스가 이미 로드되어 있는 경우, 로드된 클래스를 반환합니다. 만약 해당 클래스가 아직 로드되어 있지 않은 경우, 클래스 로더는 클래스를 로드한 후 반환합니다.
+
+예를 들어, com.example.MyClass 클래스가 이미 로드되어 있는지 확인하는 경우, 다음과 같이 ClassLoader의 loadClass() 메서드를 사용할 수 있습니다.
+```
+try {
+    ClassLoader classLoader = getClass().getClassLoader(); // 클래스 로더 가져오기
+    Class<?> clazz = classLoader.loadClass("com.example.MyClass"); // 클래스 로드
+    // 클래스가 로드되어 있으면 clazz에 로드된 클래스가 할당됩니다.
+} catch (ClassNotFoundException e) {
+    // 클래스가 로드되어 있지 않으면 ClassNotFoundException 예외가 발생합니다.
+}
+```
+위 코드에서 getClass().getClassLoader()는 현재 클래스의 클래스 로더를 가져오는 코드입니다. 이 코드에서 가져온 클래스 로더는 클래스가 로드되어 있는지 확인하는 데 사용됩니다.
+
+loadClass() 메서드는 클래스를 찾을 수 없는 경우 ClassNotFoundException 예외가 발생합니다. 따라서, try-catch 문을 사용하여 예외 처리를 해주어야 합니다.
+
+2. 객체 생성하기
+```
+Class<?> clazz = Class.forName("com.example.MyClass");
+Constructor<?> constructor = clazz.getConstructor(); // 기본 생성자
+Object obj = constructor.newInstance(); // 객체 생성
+```
+※newInstance() 메서드는 해당 클래스의 디폴트 생성자(default constructor)를 호출하여 객체를 생성합니다. 디폴트 생성자는 매개변수를 가지지 않는(public) 생성자를 말합니다.
+
+만약 클래스에 디폴트 생성자가 없는 경우, newInstance() 메서드는 InstantiationException 예외를 발생시킵니다. 이 경우에는 다른 생성자를 사용하여 객체를 생성해야 합니다.
+
+3. 메서드 호출하기
+```
+Class<?> clazz = Class.forName("com.example.MyClass");
+Object obj = clazz.newInstance();
+Method method = clazz.getDeclaredMethod("myMethod", String.class);
+method.setAccessible(true);
+Object result = method.invoke(obj, "hello"); // 메서드 호출
+```
+Method를 이용해 메소드를 호출하는 방법을 익히기 위해서 다음과 같은 간단한 학습 테스트를 만들수 있습니다
+```
+package com.kitec.learningtest.jdk;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import java.lang.reflect.Method;
+import java.util.Date;
+import org.junit.jupiter.api.Test;
+
+public class Reflection {
+	@Test
+	public void invokeMethod() throws Exception {
+		String name = "Spring";
+
+		// length
+		assertEquals(name.length(), 6);
+		
+		Method lengthMethod = String.class.getMethod("length");
+		assertEquals((Integer)lengthMethod.invoke(name), 6);
+		
+		// toUpperCase
+		assertEquals(name.charAt(0), 'S');
+		
+		Method charAtMethod = String.class.getMethod("charAt", int.class);
+		assertEquals((Character)charAtMethod.invoke(name, 0), 'S');
+	}
+	
+	@Test 
+	public void createObject() throws Exception {
+		Date now = java.util.Date.class.getDeclaredConstructor().newInstance();
+	}
+}
+```
+String 클래스의 length() 메소드롸 charAt() 메소드를 코드에서 직접 호출하는 방법과, Method를 이용해 리플렉션 방식으로 호출하는 방법을 비교한 것입니다.<br>
+4. 필드 값 접근하기
+```
+Class<?> clazz = Class.forName("com.example.MyClass");
+Object obj = clazz.newInstance();
+Field field = clazz.getDeclaredField("myField");
+field.setAccessible(true);
+Object value = field.get(obj); // 필드 값 읽기
+field.set(obj, "new value"); // 필드 값 쓰기
+```
+위 코드에서 com.example.MyClass는 예시를 위한 클래스명으로 대체 가능합니다. 또한, 리플렉션을 사용하는 경우 ClassNotFoundException, InstantiationException, IllegalAccessException, NoSuchMethodException, NoSuchFieldException, InvocationTargetException 등 다양한 예외 처리가 필요합니다.
